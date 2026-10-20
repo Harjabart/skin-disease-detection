@@ -1,6 +1,7 @@
 import os
+import gc
 
-# Limit TensorFlow CPU threads and log verbosity BEFORE importing TF to stay under 512MB RAM
+# Limit TensorFlow CPU threads and log verbosity BEFORE importing TF
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 os.environ['OMP_NUM_THREADS'] = '1'
 os.environ['TF_NUM_INTRAOP_THREADS'] = '1'
@@ -16,7 +17,7 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
-# Ensure upload directory exists at app startup for production WSGI runners
+# Ensure upload directory exists at app startup
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Load Trained Model
@@ -60,9 +61,9 @@ def index():
             img_array = tf.keras.preprocessing.image.img_to_array(img) / 255.0
             img_tensor = np.expand_dims(img_array, axis=0)
 
-            # Model Inference
-            predictions = model.predict(img_tensor)[0]
-            predicted_idx = np.argmax(predictions)
+            # Low-memory Model Inference
+            predictions = model(img_tensor, training=False).numpy()[0]
+            predicted_idx = int(np.argmax(predictions))
             predicted_class = CLASS_NAMES[predicted_idx]
             confidence = round(float(predictions[predicted_idx]) * 100, 2)
 
@@ -73,6 +74,10 @@ def index():
             gradcam_filename = 'gradcam_' + filename
             gradcam_path = os.path.join(app.config['UPLOAD_FOLDER'], gradcam_filename)
             generate_and_save_gradcam(filepath, model, LAST_CONV_LAYER_NAME, gradcam_path)
+
+            # Explicit Garbage Collection
+            del img, img_array, img_tensor, predictions
+            gc.collect()
 
             return render_template(
                 'index.html',
