@@ -1,4 +1,11 @@
 import os
+
+# Limit TensorFlow CPU threads and log verbosity BEFORE importing TF to stay under 512MB RAM
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ['OMP_NUM_THREADS'] = '1'
+os.environ['TF_NUM_INTRAOP_THREADS'] = '1'
+os.environ['TF_NUM_INTEROP_THREADS'] = '1'
+
 import numpy as np
 import tensorflow as tf
 from flask import Flask, request, render_template
@@ -9,7 +16,7 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
-# Ensure upload directory exists at app startup for production WSGI runners (e.g., Gunicorn)
+# Ensure upload directory exists at app startup for production WSGI runners
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Load Trained Model
