@@ -11,7 +11,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Load lightweight TFLite model
+# Load TFLite Model
 TFLITE_MODEL_PATH = 'skin_disease_model.tflite'
 interpreter = tf.lite.Interpreter(model_path=TFLITE_MODEL_PATH)
 interpreter.allocate_tensors()
@@ -52,7 +52,7 @@ def index():
             img_array = tf.keras.preprocessing.image.img_to_array(img) / 255.0
             img_tensor = np.expand_dims(img_array, axis=0).astype(np.float32)
 
-            # Fast TFLite Inference
+            # TFLite Inference
             interpreter.set_tensor(input_details[0]['index'], img_tensor)
             interpreter.invoke()
             predictions = interpreter.get_tensor(output_details[0]['index'])[0]
