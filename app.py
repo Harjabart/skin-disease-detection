@@ -61,8 +61,8 @@ def index():
             img_array = tf.keras.preprocessing.image.img_to_array(img) / 255.0
             img_tensor = np.expand_dims(img_array, axis=0)
 
-            # Low-memory Model Inference
-            predictions = model(img_tensor, training=False).numpy()[0]
+            # Low-memory Model Inference (verbose=0 suppresses input shape warnings)
+            predictions = model.predict(img_tensor, verbose=0)[0]
             predicted_idx = int(np.argmax(predictions))
             predicted_class = CLASS_NAMES[predicted_idx]
             confidence = round(float(predictions[predicted_idx]) * 100, 2)

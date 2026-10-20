@@ -8,12 +8,13 @@ def generate_and_save_gradcam(img_path, model, last_conv_layer_name, output_path
     img_tensor = np.expand_dims(img_array, axis=0)
 
     grad_model = tf.keras.models.Model(
-        inputs=[model.inputs],
+        inputs=model.inputs,
         outputs=[model.get_layer(last_conv_layer_name).output, model.output]
     )
 
     with tf.GradientTape() as tape:
-        conv_outputs, predictions = grad_model(img_tensor)
+        inputs = {model.input_names[0]: img_tensor} if hasattr(model, 'input_names') and model.input_names else img_tensor
+        conv_outputs, predictions = grad_model(inputs, training=False)
         pred_index = tf.argmax(predictions[0])
         class_channel = predictions[:, pred_index]
 
