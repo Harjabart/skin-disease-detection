@@ -12,7 +12,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Load TFLite Model
-TFLITE_MODEL_PATH = 'skin_disease_model.tflite'
+TFLITE_MODEL_PATH = 'model_v2.tflite'
 interpreter = tf.lite.Interpreter(model_path=TFLITE_MODEL_PATH)
 interpreter.allocate_tensors()
 
