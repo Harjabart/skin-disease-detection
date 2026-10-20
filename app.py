@@ -2,6 +2,7 @@ import os
 import gc
 import numpy as np
 import tensorflow as tf
+from PIL import Image
 from flask import Flask, request, render_template
 from werkzeug.utils import secure_filename
 
@@ -47,10 +48,11 @@ def index():
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
 
-            # Preprocess image
-            img = tf.keras.preprocessing.image.load_img(filepath, target_size=(224, 224))
-            img_array = tf.keras.preprocessing.image.img_to_array(img) / 255.0
-            img_tensor = np.expand_dims(img_array, axis=0).astype(np.float32)
+            # Lightweight PIL preprocessing
+            img = Image.open(filepath).convert('RGB')
+            img = img.resize((224, 224))
+            img_array = np.array(img, dtype=np.float32) / 255.0
+            img_tensor = np.expand_dims(img_array, axis=0)
 
             # TFLite Inference
             interpreter.set_tensor(input_details[0]['index'], img_tensor)
@@ -63,6 +65,7 @@ def index():
 
             probabilities = {CLASS_NAMES[i]: round(float(predictions[i]) * 100, 2) for i in range(len(CLASS_NAMES))}
 
+            # Garbage Collection
             del img, img_array, img_tensor, predictions
             gc.collect()
 
