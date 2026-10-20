@@ -1,11 +1,11 @@
 Flask==3.0.0
+gunicorn==21.2.0
+numpy==1.26.4
+opencv-python-headless==4.9.0.80
+tensorflow==2.16.1
+Werkzeug==3.0.1
 pandas
 matplotlib
 scikit-learn
 opencv-python
 Pillow
-gunicorn==21.2.0
-numpy==1.26.2
-opencv-python-headless==4.8.1.78
-tensorflow-cpu==2.15.0
-Werkzeug==3.0.1
