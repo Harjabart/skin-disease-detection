@@ -6,3 +6,5 @@ scikit-learn
 opencv-python
 Pillow
 Flask
+gunicorn
+werkzeug
