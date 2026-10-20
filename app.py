@@ -9,6 +9,9 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
+# Ensure upload directory exists at app startup for production WSGI runners (e.g., Gunicorn)
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
 # Load Trained Model
 MODEL_PATH = 'skin_disease_cnn_model.h5'
 model = tf.keras.models.load_model(MODEL_PATH)
@@ -76,5 +79,5 @@ def index():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port, debug=False)
