@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skin Lesion Detection System</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        :root {
+            --bg-page: #f9fbf9;
+            --card-bg: #ffffff;
+            --soft-green: #eaf3ed;
+            --accent-green: #7ca895;
+            --hover-green: #689381;
+            --text-dark: #2d3748;
+            --text-muted: #718096;
+            --border-light: #e2e8f0;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-dark);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            padding: 30px 15px;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .main-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-light);
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            margin-bottom: 20px;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #d1e2d7;
+            background-color: #fcfdfe;
+            border-radius: 12px;
+            padding: 32px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent-green);
+            background-color: #f4f8f5;
+        }
+
+        .icon-circle {
+            width: 54px;
+            height: 54px;
+            background-color: var(--soft-green);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-green);
+            margin-bottom: 12px;
+        }
+
+        .upload-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .upload-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+
+        .btn-browse {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: var(--text-dark);
+            font-weight: 500;
+            padding: 6px 18px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .file-specs {
+            color: #a0aec0;
+            font-size: 0.78rem;
+            margin-top: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Input Preparation Section */
+        .prep-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .prep-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .prep-note {
+            font-size: 0.78rem;
+            color: #a0aec0;
+        }
+
+        .prep-grid {
+            background-color: #f8faf9;
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            border: 1px solid #edf2f0;
+            margin-bottom: 20px;
+        }
+
+        .prep-step {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .prep-step-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        .prep-step-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .prep-step-sub {
+            font-size: 0.72rem;
+            color: #a0aec0;
+        }
+
+        /* Action Button */
+        .btn-analyze {
+            background-color: var(--accent-green);
+            color: #ffffff;
+            font-weight: 600;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-analyze:hover {
+            background-color: var(--hover-green);
+            color: #ffffff;
+        }
+
+        .service-note {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #a0aec0;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* Output Section */
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 8px;
+        }
+
+        .output-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .output-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .output-tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #a0aec0;
+            letter-spacing: 0.5px;
+        }
+
+        .output-box {
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            background-color: #ffffff;
+        }
+
+        .result-badge {
+            display: inline-block;
+            background-color: var(--soft-green);
+            color: var(--accent-green);
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 10px;
+        }
+
+        /* Footer Disclaimer */
+        .disclaimer-card {
+            background-color: var(--soft-green);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .disclaimer-icon {
+            color: var(--accent-green);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .disclaimer-title {
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        .disclaimer-text {
+            font-size: 0.8rem;
+            color: #4a5568;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .file-preview-img {
+            max-height: 140px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <form action="/" method="POST" enctype="multipart/form-data" id="predictionForm">
+            <!-- Main Input Card -->
+            <div class="main-card">
+                <!-- Image Drop Area -->
+                <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                    <div class="icon-circle">
+                        <i data-lucide="image-plus"></i>
+                    </div>
+                    
+                    <img id="imagePreview" class="file-preview-img mx-auto" alt="Preview">
+
+                    <div class="upload-title" id="uploadTitle">Drop an image to begin</div>
+                    <div class="upload-subtitle" id="uploadSub">or choose a file from your device</div>
+                    
+                    <button type="button" class="btn btn-browse">Browse files</button>
+                    
+                    <div class="file-specs">JPG · JPEG · PNG / MAX 8 MB</div>
+                    <input type="file" id="fileInput" name="file" accept="image/*" class="d-none" required onchange="handleFileSelect(event)">
+                </div>
+
+                <!-- Input Preparation Details -->
+                <div class="prep-header">
+                    <span class="prep-title">Input Preparation</span>
+                    <span class="prep-note">Service-side unless noted</span>
+                </div>
+
+                <div class="prep-grid">
+                    <div class="prep-step">
+                        <div class="prep-step-header">
+                            <i data-lucide="check-circle-2" style="width: 14px; color: var(--accent-green);"></i>
+                            01
+                        </div>
+                        <div class="prep-step-desc">File validation</div>
+                        <div class="prep-step-sub">On selection</div>
+                    </div>
+
+                    <div class="prep-step">
+                        <div class="prep-step-header">
+                            <i data-lucide="maximize-2" style="width: 14px; color: var(--text-muted);"></i>
+                            224²
+                        </div>
+                        <div class="prep-step-desc">Resize to 224 × 224</div>
+                        <div class="prep-step-sub">Model service</div>
+                    </div>
+
+                    <div class="prep-step">
+                        <div class="prep-step-header">
+                            <i data-lucide="sliders" style="width: 14px; color: var(--text-muted);"></i>
+                            /255
+                        </div>
+                        <div class="prep-step-desc">Pixel normalization</div>
+                        <div class="prep-step-sub">Model service</div>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <button type="submit" class="btn-analyze" id="submitBtn">
+                    <i data-lucide="flask-conical" style="width: 18px;"></i>
+                    <span id="btnText">Analyze image</span>
+                    <i data-lucide="arrow-up-right" style="width: 18px;"></i>
+                </button>
+
+                <div class="service-note">
+                    <i data-lucide="lock" style="width: 12px;"></i>
+                    Image is sent to the configured model service for analysis.
+                </div>
+            </div>
+
+            <!-- Output Section -->
+            <div class="main-card">
+                <div class="output-header">
+                    <div class="output-title">Model output</div>
+                    <div class="output-tag">02 / RESULT</div>
+                </div>
+                <div class="output-subtitle">Predicted class and per-class probabilities.</div>
+
+                <div class="output-box">
+                    {% if prediction %}
+                        <div class="icon-circle mb-2">
+                            <i data-lucide="clipboard-check"></i>
+                        </div>
+                        <div class="fw-bold fs-5 text-dark">Classification Complete</div>
+                        <div class="result-badge mb-2">{{ prediction }}</div>
+                        <div class="text-muted small">Confidence Score: <strong>{{ confidence }}%</strong></div>
+                    {% else %}
+                        <div class="icon-circle mb-3">
+                            <i data-lucide="clipboard-list"></i>
+                        </div>
+                        <div class="fw-bold text-dark fs-6 mb-1">Your result will appear here</div>
+                        <div class="text-muted small mb-3">Choose an image, then ask the connected model service to return its output.</div>
+                        <div class="text-muted small style="font-family: monospace; font-size: 0.78rem;">
+                            <span style="color: var(--accent-green);">●</span> No prediction generated
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+
+        <!-- Disclaimer Footer -->
+        <div class="disclaimer-card">
+            <div class="disclaimer-icon">
+                <i data-lucide="shield-alert" style="width: 20px; height: 20px;"></i>
+            </div>
+            <div>
+                <div class="disclaimer-title">Research & education only — not a clinical diagnosis</div>
+                <p class="disclaimer-text">
+                    This tool displays the output of an AI model for research and educational exploration. It is not a medical device, does not provide medical advice, and must not replace assessment by a qualified clinician.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Initialize Lucide Icons -->
+    <script>
+        lucide.createIcons();
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById('imagePreview');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    
+                    document.getElementById('uploadTitle').textContent = file.name;
+                    document.getElementById('uploadSub').textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        document.getElementById('predictionForm').addEventListener('submit', function() {
+            document.getElementById('btnText').textContent = 'Analyzing...';
+            document.getElementById('submitBtn').style.opacity = '0.8';
+        });
+    </script>
+</body>
+</html>
